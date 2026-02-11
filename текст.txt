@@ -1,0 +1,285 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>С праздником!</title>
+  <!-- Только два шрифта: без лишних украшений -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* СБРОС И МИНИМАЛИСТИЧНАЯ БАЗА */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #fff0f2;  /* очень мягкий фон */
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ----- ПАРЯЩИЕ СТИКЕРЫ (ТЕ ЖЕ, ТОЛЬКО ЧИЩЕ) ----- */
+    .hearts-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0.3;  /* прозрачнее, не перебивают текст */
+      color: #ffa5b0;
+      user-select: none;
+      animation: float 12s infinite ease-in-out;
+    }
+
+    .heart:nth-child(1) { left: 5%; top: 15%; font-size: 40px; animation-delay: 0s; }
+    .heart:nth-child(2) { left: 15%; top: 70%; font-size: 32px; animation-delay: 2s; }
+    .heart:nth-child(3) { left: 85%; top: 20%; font-size: 48px; animation-delay: 1s; }
+    .heart:nth-child(4) { left: 75%; top: 80%; font-size: 36px; animation-delay: 4s; }
+    .heart:nth-child(5) { left: 25%; top: 40%; font-size: 28px; animation-delay: 6s; }
+    .heart:nth-child(6) { left: 45%; top: 10%; font-size: 44px; animation-delay: 3s; }
+    .heart:nth-child(7) { left: 60%; top: 55%; font-size: 30px; animation-delay: 7s; }
+    .heart:nth-child(8) { left: 90%; top: 90%; font-size: 52px; animation-delay: 1.5s; }
+    .heart:nth-child(9) { left: 10%; top: 85%; font-size: 34px; animation-delay: 5s; }
+    .heart:nth-child(10) { left: 70%; top: 30%; font-size: 38px; animation-delay: 8s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* ----- КАРТОЧКА: МИНИМАЛИЗМ ----- */
+    .card {
+      position: relative;
+      z-index: 10;
+      max-width: 720px;
+      width: 100%;
+      background: white;
+      border-radius: 32px;
+      padding: 48px 40px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+      border: 1px solid rgba(255, 200, 200, 0.3);
+      transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 36px rgba(255, 150, 150, 0.08);
+    }
+
+    /* ЗАГОЛОВОК – ТИХИЙ, НО ПРАЗДНИЧНЫЙ */
+    .card-header {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .heart-icon {
+      font-size: 28px;
+      color: #f77b8c;
+      opacity: 0.7;
+    }
+
+    .main-title {
+      font-size: 36px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: #b83b4a;
+      border-bottom: 1px solid #ffe1e4;
+      padding-bottom: 8px;
+    }
+
+    /* ИМЯ – БЕЗ ГРАДИЕНТА, ПРОСТО АКЦЕНТ */
+    .greeting-name {
+      font-size: 48px;
+      font-weight: 500;
+      color: #c1315b;
+      text-align: center;
+      margin: 12px 0 8px;
+    }
+
+    .greeting-name span {
+      background: none;
+      -webkit-text-fill-color: #c1315b;
+      color: #c1315b;
+      padding: 0;
+    }
+
+    /* ТЕКСТ – МИНИМУМ УКРАШАТЕЛЬСТВ, МАКСИМУМ ВОЗДУХА */
+    .message {
+      background: #fffafa;
+      padding: 32px 32px;
+      border-radius: 24px;
+      margin: 28px 0 24px;
+      border: 1px solid #ffe4e6;
+      font-size: 20px;
+      line-height: 1.7;
+      color: #3f2e30;
+      font-weight: 400;
+    }
+
+    .message p {
+      margin-bottom: 20px;
+    }
+
+    .message p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ЛЁГКИЕ ЦВЕТОВЫЕ АКЦЕНТЫ – БЕЗ ГРАДИЕНТОВ, ПЛОСКИЕ */
+    .tik-tok {
+      font-weight: 600;
+      color: #e6005e;
+      background: transparent;
+      -webkit-text-fill-color: #e6005e;
+    }
+
+    .discord {
+      font-weight: 600;
+      color: #556cd6;
+      background: transparent;
+      -webkit-text-fill-color: #556cd6;
+    }
+
+    .emoji-big {
+      font-size: 24px;
+      vertical-align: middle;
+    }
+
+    /* ПОСЛЕДНЯЯ ФРАЗА – БЕЗ ЛИШНЕЙ ТЯЖЕСТИ */
+    .message p:last-child {
+      font-size: 22px;
+      font-weight: 500;
+      color: #a8485a;
+    }
+
+    /* ПОДПИСЬ – ТОЛЬКО ИМЯ, НИКАКОЙ ЛИШНЕЙ ГРАФИКИ */
+    .signature {
+      text-align: right;
+      margin-top: 16px;
+      padding-top: 20px;
+      border-top: 1px solid #ffd9de;
+      font-size: 28px;
+      font-weight: 400;
+      color: #8f4355;
+    }
+
+    .signature span {
+      background: none;
+      padding: 0;
+      box-shadow: none;
+      border-radius: 0;
+      font-size: 28px;
+    }
+
+    /* АДАПТАЦИЯ */
+    @media (max-width: 550px) {
+      .card { padding: 32px 24px; }
+      .main-title { font-size: 30px; }
+      .greeting-name { font-size: 40px; }
+      .message { font-size: 18px; padding: 24px; }
+      .signature { font-size: 24px; }
+      .signature span { font-size: 24px; }
+    }
+
+    /* УБРАЛИ ВСЕ РАЗНОЦВЕТНЫЕ СЕРДЕЧКИ-ГИРЛЯНДЫ – ИХ БОЛЬШЕ НЕТ */
+    /* УБРАЛИ ЛИШНИЙ РАЗДЕЛИТЕЛЬ "═══ ❤️ ═══" – ТОЖЕ УДАЛЁН */
+  </style>
+</head>
+<body>
+  <!-- ТЕ САМЫЕ ПАРЯЩИЕ СТИКЕРЫ – ОСТАЛИСЬ -->
+  <div class="hearts-bg">
+    <div class="heart">❤️</div>
+    <div class="heart">💖</div>
+    <div class="heart">💘</div>
+    <div class="heart">💝</div>
+    <div class="heart">💗</div>
+    <div class="heart">💓</div>
+    <div class="heart">💕</div>
+    <div class="heart">💞</div>
+    <div class="heart">❣️</div>
+    <div class="heart">♥️</div>
+  </div>
+
+  <!-- МИНИМАЛИСТИЧНАЯ ОТКРЫТКА -->
+  <main class="card">
+    <div class="card-header">
+      <span class="heart-icon">💌</span>
+      <h1 class="main-title">14 февраля</h1>
+      <span class="heart-icon">💌</span>
+    </div>
+
+    <div class="greeting-name">
+      <span>Лина</span> 
+      <span style="font-size: 35px;">🌸</span>
+    </div>
+
+    <!-- ТЕКСТ ПОЛНОСТЬЮ СОХРАНЁН, БЕЗ ИЗМЕНЕНИЙ -->
+    <div class="message">
+      <p>
+        <span class="emoji-big">❤️</span> 
+        Я тебя поздравляю с <strong style="color:#b83b4a;">14 февраля</strong>!
+      </p>
+      <p>
+        У тебя <span class="tik-tok">самые классные тик токи</span> 
+        <span style="font-size:24px;">🎵</span> и с тобой 
+        <span class="discord">интереснее всего сидеть в дискорде</span> 
+        <span style="font-size:24px;">🎧</span>
+      </p>
+      <p>
+        Желаю тебе всего наилучшего!
+        <span style="font-size:28px;">✨</span>
+      </p>
+    </div>
+
+    <!-- ПОДПИСЬ: ОТ ТИМОФЕЯ (БЕЗ ЛИШНИХ СЕРДЕЦ) -->
+    <div class="signature">
+      <span>от Тимофея</span>
+    </div>
+  </main>
+
+  <!-- ЛЁГКИЙ ИНТЕРАКТИВ: СЕРДЕЧКИ ПО КЛИКУ (МОЖНО ОСТАВИТЬ, ОЧЕНЬ НЕНАВЯЗЧИВО) -->
+  <script>
+    (function() {
+      document.body.addEventListener('click', function(e) {
+        const heartEmojis = ['❤️','💖','💘','💝'];
+        const heart = document.createElement('div');
+        heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+        heart.style.position = 'fixed';
+        heart.style.left = (e.clientX - 16) + 'px';
+        heart.style.top = (e.clientY - 16) + 'px';
+        heart.style.fontSize = '28px';
+        heart.style.color = '#ff8a9c';
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '9999';
+        heart.style.opacity = '0.6';
+        heart.style.animation = 'floatUp 1.8s ease-out forwards';
+        document.body.appendChild(heart);
+        setTimeout(() => { heart.remove(); }, 1800);
+      });
+    })();
+  </script>
+  <style>
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 0.6; }
+      100% { transform: translateY(-90px) scale(1.6); opacity: 0; }
+    }
+  </style>
+</body>
+</html>

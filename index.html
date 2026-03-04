@@ -3,106 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Согласие на cookie</title>
+    <title>Подтверждение cookie</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .cookie-popup {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
-            max-width: 400px;
-            text-align: center;
-        }
-        .cookie-popup h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        .cookie-popup p {
-            color: #666;
-            line-height: 1.5;
-        }
-        .video-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2000;
             background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            cursor: pointer;
         }
-        video {
+        #message {
+            text-align: center;
+            font-size: 24px;
+            z-index: 10;
+            position: relative;
+        }
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Заполняет весь экран, обрезая лишнее */
+            display: none;
+            z-index: 20;
+        }
+        #video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
-
-    <div class="overlay" id="cookieOverlay">
-        <div class="cookie-popup">
-            <h2>🍪 Мы используем файлы cookie</h2>
-            <p>Продолжая использовать этот сайт, вы соглашаетесь на использование файлов cookie. Нажимая в любом месте экрана, вы подтверждаете свое согласие.</p>
-            <p><small>(Это просто уведомление, кнопки не нужны)</small></p>
-        </div>
+    <div id="message">
+        <h1>Нажмите в любое место, чтобы подтвердить файлы cookie</h1>
+        <p>(Это необходимо для продолжения)</p>
     </div>
-
-    <div class="video-container" id="videoContainer">
-        <video id="scareVideo" preload="auto" playsinline webkit-playsinline>
-            <source src="JeffKiller.mp4" type="video/mp4">
-            Ваш браузер не поддерживает видео.
-        </video>
+    <div id="video-container">
+        <video id="scary-video" src="Jeffkillermp4.mp4" preload="auto" playsinline></video>
     </div>
 
     <script>
-        let scareTriggered = false;
-
-        function triggerScare() {
-            if (scareTriggered) return;
-            scareTriggered = true;
-
-            // Скрываем уведомление
-            document.getElementById('cookieOverlay').style.display = 'none';
-
-            // Показываем контейнер с видео
-            const videoContainer = document.getElementById('videoContainer');
-            videoContainer.style.display = 'block';
-
-            // Запускаем видео на полную громкость
-            const video = document.getElementById('scareVideo');
-            video.volume = 1.0; // 100% громкость
-            video.play().catch(error => {
-                console.warn('Автовоспроизведение не удалось:', error);
-                // Если браузер заблокировал видео, можно попробовать ещё раз по клику
-                // Но обычно после клика пользователя всё работает
+        document.body.addEventListener('click', function() {
+            const container = document.getElementById('video-container');
+            const video = document.getElementById('scary-video');
+            
+            container.style.display = 'block';
+            
+            video.play().catch(e => {
+                console.error('Ошибка воспроизведения:', e);
+                // Если видео не загрузилось, можно показать сообщение
+                alert('Не удалось загрузить видео. Проверьте наличие файла Jeffkillermp4.mp4');
             });
-        }
-
-        // Любой клик запускает скример
-        document.addEventListener('click', triggerScare);
+            
+            document.getElementById('message').style.display = 'none';
+            
+            // Удаляем обработчик, чтобы случайно не запустить видео повторно
+            document.body.removeEventListener('click', arguments.callee);
+        });
     </script>
 </body>
 </html>

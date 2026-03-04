@@ -43,23 +43,21 @@
             color: #666;
             line-height: 1.5;
         }
-        /* Чёрный экран, который появляется после клика */
-        .black-screen {
+        .video-container {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: black;
             z-index: 2000;
+            background-color: black;
         }
-        /* Если хотите добавить картинку вместо чёрного фона — раскомментируйте и укажите путь к изображению */
-        /*
-        .black-screen {
-            background: black url('jeff.jpg') center/cover no-repeat;
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Заполняет весь экран, обрезая лишнее */
         }
-        */
     </style>
 </head>
 <body>
@@ -72,14 +70,12 @@
         </div>
     </div>
 
-    <!-- Чёрный экран (или фон для скримера) -->
-    <div class="black-screen" id="blackScreen"></div>
-
-    <!-- Аудио элемент с предзагрузкой -->
-    <audio id="scareAudio" preload="auto">
-        <source src="JeffKiller.mp3" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио.
-    </audio>
+    <div class="video-container" id="videoContainer">
+        <video id="scareVideo" preload="auto" playsinline webkit-playsinline>
+            <source src="JeffKiller.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
 
     <script>
         let scareTriggered = false;
@@ -91,16 +87,17 @@
             // Скрываем уведомление
             document.getElementById('cookieOverlay').style.display = 'none';
 
-            // Показываем чёрный экран
-            document.getElementById('blackScreen').style.display = 'block';
+            // Показываем контейнер с видео
+            const videoContainer = document.getElementById('videoContainer');
+            videoContainer.style.display = 'block';
 
-            // Воспроизводим аудио с максимальной громкостью
-            const audio = document.getElementById('scareAudio');
-            audio.volume = 1.0; // 100% громкость
-            audio.play().catch(error => {
-                console.warn('Не удалось воспроизвести аудио:', error);
-                // Если браузер заблокировал автовоспроизведение, можно показать сообщение
-                alert('Нажмите ещё раз, чтобы активировать звук (из-за настроек браузера)');
+            // Запускаем видео на полную громкость
+            const video = document.getElementById('scareVideo');
+            video.volume = 1.0; // 100% громкость
+            video.play().catch(error => {
+                console.warn('Автовоспроизведение не удалось:', error);
+                // Если браузер заблокировал видео, можно попробовать ещё раз по клику
+                // Но обычно после клика пользователя всё работает
             });
         }
 

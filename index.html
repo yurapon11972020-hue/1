@@ -5,34 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Согласие на cookie</title>
     <style>
-        /* Стили для затемнения фона и самого уведомления */
         body {
             margin: 0;
             padding: 0;
             font-family: sans-serif;
-            /* Минимальный стиль, чтобы страница не была пустой */
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
-
-        /* Затемняющий фон за уведомлением */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Полупрозрачный черный */
+            background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* Поверх всего */
+            z-index: 1000;
         }
-
-        /* Само уведомление (белое окошко) */
         .cookie-popup {
             background-color: white;
             padding: 30px;
@@ -41,52 +35,33 @@
             max-width: 400px;
             text-align: center;
         }
-
         .cookie-popup h2 {
             margin-top: 0;
             color: #333;
         }
-
         .cookie-popup p {
             color: #666;
             line-height: 1.5;
         }
-
-        /* Контейнер для видео (скрыт по умолчанию) */
         .video-container {
-            display: none; /* Скрываем видео до клика */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2000; /* Еще выше, поверх уведомления */
+            z-index: 2000;
             background-color: black;
         }
-
-        /* Стиль для видео, чтобы оно занимало весь экран */
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        video {
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Чтобы видео не реагировало на клики и не давало выйти */
-            border: none;
-        }
-
-        /* Небольшая заглушка на случай, если видео не запустится */
-        .fallback-message {
-            display: none;
-            color: white;
-            text-align: center;
-            padding: 20px;
+            object-fit: cover; /* Видео заполняет весь экран, обрезаясь если нужно */
         }
     </style>
 </head>
 <body>
 
-    <!-- Затемняющий фон с уведомлением о cookie -->
     <div class="overlay" id="cookieOverlay">
         <div class="cookie-popup">
             <h2>🍪 Мы используем файлы cookie</h2>
@@ -95,154 +70,40 @@
         </div>
     </div>
 
-    <!-- Скрытый контейнер для видео-скримера -->
     <div class="video-container" id="videoContainer">
-        <!-- Видео будет вставлено через JavaScript, чтобы контролировать автостарт и громкость -->
-        <div id="player"></div>
-        <div class="fallback-message">
-            Если видео не запустилось, <a href="#" id="fallbackLink" style="color: white;">нажмите здесь</a> (но зрение вы уже не вернете).
-        </div>
+        <video id="scareVideo" preload="auto" playsinline webkit-playsinline>
+            <source src="scare.mp4" type="video/mp4">
+            <!-- Добавьте другие форматы для надёжности, например WebM -->
+            <!-- <source src="scare.webm" type="video/webm"> -->
+            Ваш браузер не поддерживает видео.
+        </video>
     </div>
 
     <script>
-        // Переменная, чтобы скример сработал только один раз
         let scareTriggered = false;
 
-        // Функция для запуска скримера
         function triggerScare() {
-            if (scareTriggered) return; // Если уже сработал, ничего не делаем
+            if (scareTriggered) return;
             scareTriggered = true;
 
-            // 1. Скрываем уведомление о cookie
-            const overlay = document.getElementById('cookieOverlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-            }
+            // Скрываем уведомление
+            document.getElementById('cookieOverlay').style.display = 'none';
 
-            // 2. Показываем контейнер с видео
+            // Показываем контейнер с видео
             const videoContainer = document.getElementById('videoContainer');
             videoContainer.style.display = 'block';
 
-            // 3. Загружаем и запускаем видео с YouTube
-            //    Важно: используем iframe с параметрами для автозапуска, отключения звука и максимальной громкости.
-            //    Из-за политики автозапуска в браузерах, видео с выключенным звуком (mute=1) может запуститься автоматически.
-            //    Мы включим звук сразу после запуска через API, но это не всегда срабатывает без взаимодействия.
-            //    Альтернативный и более надежный способ с громким звуком — использовать ссылку на видео напрямую,
-            //    но она должна быть встроена в страницу.
-
-            // Способ 1: Попытка через iframe с автозапуском и звуком (может не сработать из-за политик браузера)
-            // Параметр autoplay=1, mute=0 (звук включен) часто блокируется. Лучше использовать mute=1 и потом включить звук, но для этого нужно API.
-
-            // Способ 2: Используем YouTube Player API для большего контроля.
-            // Этот способ позволяет включить звук программно, но требует чуть больше кода.
-
-            // Проверяем, загружено ли уже API YouTube
-            if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-                // Загружаем API YouTube, если его нет
-                const tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-                // Функция будет вызвана, когда API загрузится
-                window.onYouTubeIframeAPIReady = function() {
-                    createPlayer();
-                };
-            } else {
-                // API уже загружено
-                createPlayer();
-            }
-
-            function createPlayer() {
-                // Создаем плеер в div с id="player"
-                const player = new YT.Player('player', {
-                    height: '100%',
-                    width: '100%',
-                    videoId: 'UZw7y0-txpI', // ID видео из вашей ссылки
-                    playerVars: {
-                        'autoplay': 1,
-                        'controls': 0,       // Убираем элементы управления
-                        'rel': 0,
-                        'showinfo': 0,
-                        'modestbranding': 1,
-                        'iv_load_policy': 3, // Убираем аннотации
-                        'fs': 0,              // Отключаем полноэкранный режим (он и так включен)
-                        'playsinline': 1,
-                        'mute': 0              // Пытаемся сразу включить звук (может не сработать)
-                    },
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onError': onPlayerError
-                    }
-                });
-
-                function onPlayerReady(event) {
-                    // Пытаемся увеличить громкость до максимума
-                    event.target.setVolume(100);
-                    // Запускаем видео (autoplay уже должен сработать)
-                    event.target.playVideo();
-                    
-                    // Дополнительно: пробуем включить звук, если он отключен
-                    if (event.target.isMuted()) {
-                        event.target.unMute();
-                    }
-                    
-                    console.log('Плеер готов, видео запущено с громкостью 100%');
-                }
-
-                function onPlayerError(event) {
-                    console.error('Ошибка плеера:', event.data);
-                    // Показываем запасную ссылку на случай ошибки
-                    document.querySelector('.fallback-message').style.display = 'block';
-                }
-            }
-
-            // 4. Запасной вариант на случай, если API не сработает (например, через просто iframe)
-            //    Но мы уже используем API, оставим этот блок как резервный.
-            //    Если API не загрузится через 3 секунды, вставим простой iframe.
-            setTimeout(function() {
-                const playerDiv = document.getElementById('player');
-                // Если в div с игроком ничего нет (API не сработало), вставляем iframe напрямую
-                if (playerDiv && !playerDiv.hasChildNodes()) {
-                    console.warn('API YouTube не загрузилось, используем прямой iframe');
-                    
-                    // Прямой iframe с автозапуском (звук включен, но может быть заблокирован)
-                    const iframe = document.createElement('iframe');
-                    iframe.src = 'https://www.youtube.com/embed/UZw7y0-txpI?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&iv_load_policy=3&fs=0&playsinline=1';
-                    iframe.setAttribute('allow', 'autoplay; fullscreen');
-                    iframe.setAttribute('allowfullscreen', 'true');
-                    iframe.style.position = 'absolute';
-                    iframe.style.top = '0';
-                    iframe.style.left = '0';
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                    iframe.style.border = 'none';
-                    iframe.style.pointerEvents = 'none'; // Чтобы клики не мешали
-                    
-                    playerDiv.innerHTML = ''; // Очищаем
-                    playerDiv.appendChild(iframe);
-                    
-                    // Показываем сообщение на случай, если звук не включится
-                    document.querySelector('.fallback-message').style.display = 'block';
-                }
-            }, 3000); // Ждем 3 секунды
+            // Получаем видео и запускаем
+            const video = document.getElementById('scareVideo');
+            video.volume = 1.0; // Максимальная громкость
+            video.play().catch(error => {
+                console.warn('Автовоспроизведение не удалось:', error);
+                // Если не удалось, возможно, нужен ещё один клик
+            });
         }
 
-        // Обработчик клика по любому месту на странице
-        document.addEventListener('click', function() {
-            triggerScare();
-        });
-
-        // Также сработает при клике на само уведомление (так как оно часть страницы)
-        // Дополнительно: убираем стандартное поведение ссылки в запасном сообщении,
-        // чтобы случайно не перейти по ней и не испортить эффект.
-        document.getElementById('fallbackLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            triggerScare(); // На всякий случай, если кликнут по ссылке
-        });
-
-        // Предупреждение для пользователя (необязательно, можно убрать)
-        console.log('Сайт запущен. Любой клик вызовет скример.');
+        // Любой клик запускает скример
+        document.addEventListener('click', triggerScare);
     </script>
 </body>
 </html>

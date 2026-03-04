@@ -32,11 +32,25 @@
             height: 100%;
             display: none;
             z-index: 20;
+            background: black;
         }
         #video-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        #error-message {
+            display: none;
+            color: red;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            border: 2px solid red;
         }
     </style>
 </head>
@@ -46,26 +60,54 @@
         <p>(Это необходимо для продолжения)</p>
     </div>
     <div id="video-container">
-        <video id="scary-video" src="Jeffkillermp4.mp4" preload="auto" playsinline></video>
+        <video id="scary-video" preload="auto" playsinline>
+            <source src="Jeffkillermp4.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
     </div>
+    <div id="error-message"></div>
 
     <script>
-        document.body.addEventListener('click', function() {
-            const container = document.getElementById('video-container');
-            const video = document.getElementById('scary-video');
-            
+        const video = document.getElementById('scary-video');
+        const container = document.getElementById('video-container');
+        const message = document.getElementById('message');
+        const errorDiv = document.getElementById('error-message');
+
+        // Проверка загрузки видео
+        video.addEventListener('error', function(e) {
+            console.error('Ошибка загрузки видео:', video.error);
+            let errorText = 'Не удалось загрузить видео. Проверьте:<br>' +
+                           '- Файл должен называться точно <strong>Jeffkillermp4.mp4</strong> (с учётом регистра)<br>' +
+                           '- Файл должен лежать в той же папке, что и index.html<br>' +
+                           '- Видео должно быть в формате MP4 (H.264)';
+            errorDiv.innerHTML = errorText;
+            errorDiv.style.display = 'block';
+        });
+
+        // Успешная загрузка метаданных (видео готово)
+        video.addEventListener('loadedmetadata', function() {
+            console.log('Видео загружено, длительность:', video.duration);
+        });
+
+        // Обработка клика
+        document.body.addEventListener('click', function onClick() {
+            // Удаляем обработчик, чтобы повторный клик не ломал логику
+            document.body.removeEventListener('click', onClick);
+
+            // Скрываем сообщение
+            message.style.display = 'none';
+
+            // Показываем контейнер с видео
             container.style.display = 'block';
-            
-            video.play().catch(e => {
-                console.error('Ошибка воспроизведения:', e);
-                // Если видео не загрузилось, можно показать сообщение
-                alert('Не удалось загрузить видео. Проверьте наличие файла Jeffkillermp4.mp4');
+
+            // Пытаемся воспроизвести
+            video.play().then(() => {
+                console.log('Видео запущено');
+            }).catch(err => {
+                console.error('Ошибка воспроизведения:', err);
+                errorDiv.innerHTML = 'Не удалось воспроизвести видео. Возможно, браузер блокирует автовоспроизведение. Попробуйте нажать ещё раз.';
+                errorDiv.style.display = 'block';
             });
-            
-            document.getElementById('message').style.display = 'none';
-            
-            // Удаляем обработчик, чтобы случайно не запустить видео повторно
-            document.body.removeEventListener('click', arguments.callee);
         });
     </script>
 </body>

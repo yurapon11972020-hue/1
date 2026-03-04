@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Подтверждение cookie</title>
+    <!-- Предзагрузка видео для ускорения -->
+    <link rel="preload" href="Jeffkillermp4.mp4" as="video" type="video/mp4">
     <style>
         body {
             margin: 0;
@@ -60,7 +62,7 @@
         <p>(Это необходимо для продолжения)</p>
     </div>
     <div id="video-container">
-        <video id="scary-video" preload="auto" playsinline>
+        <video id="scary-video" preload="auto" playsinline muted>
             <source src="Jeffkillermp4.mp4" type="video/mp4">
             Ваш браузер не поддерживает видео.
         </video>
@@ -84,14 +86,26 @@
             errorDiv.style.display = 'block';
         });
 
-        // Успешная загрузка метаданных (видео готово)
+        // Успешная загрузка метаданных
         video.addEventListener('loadedmetadata', function() {
             console.log('Видео загружено, длительность:', video.duration);
         });
 
+        // Функция для запроса полноэкранного режима
+        function requestFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) { /* Safari */
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { /* IE/Edge */
+                element.msRequestFullscreen();
+            }
+            // Если не поддерживается — просто проигнорируем
+        }
+
         // Обработка клика
         document.body.addEventListener('click', function onClick() {
-            // Удаляем обработчик, чтобы повторный клик не ломал логику
+            // Удаляем обработчик
             document.body.removeEventListener('click', onClick);
 
             // Скрываем сообщение
@@ -100,9 +114,14 @@
             // Показываем контейнер с видео
             container.style.display = 'block';
 
+            // Снимаем mute (если был установлен для автовоспроизведения)
+            video.muted = false;
+
             // Пытаемся воспроизвести
             video.play().then(() => {
                 console.log('Видео запущено');
+                // Запрашиваем полноэкранный режим (можно для контейнера или самого video)
+                requestFullscreen(container);
             }).catch(err => {
                 console.error('Ошибка воспроизведения:', err);
                 errorDiv.innerHTML = 'Не удалось воспроизвести видео. Возможно, браузер блокирует автовоспроизведение. Попробуйте нажать ещё раз.';
